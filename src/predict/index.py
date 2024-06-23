@@ -1,4 +1,4 @@
-from flask import Blueprint, Flask, request, jsonify
+from flask import Blueprint, request, jsonify
 from tensorflow.keras.models import load_model
 import numpy as np
 import joblib
