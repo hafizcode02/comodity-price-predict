@@ -7,3 +7,7 @@ web = Blueprint('web', __name__, template_folder='templates')
 def index():
     # return "Hello, World!"
     return render_template('index.html')
+
+@web.route('/predict')
+def predict():
+    return render_template('predict.html')
