@@ -33,13 +33,13 @@
                 <div class="menu">
                     <ul class="list">
                         <li class="header">MAIN</li>
-                        <li>
-                            <a href="#" class="menu-toggle">
+                        <li class="{{ 'active' if active_page == 'dashboard' else '' }}">
+                            <a href="{{ url_for('web.index') }}" class="menu-toggle">
                                 <i class="zmdi zmdi-home"></i><span>Dashboard</span>
                             </a>
                         </li>
-                        <li class="active open">
-                            <a href="#" class="menu-toggle">
+                        <li class="{{ 'active' if active_page == 'predict' else '' }}">
+                            <a href="{{ url_for('web.predict') }}" class="menu-toggle">
                                 <i class="zmdi zmdi-chart"></i><span>Predict</span>
                             </a>
                         </li>
