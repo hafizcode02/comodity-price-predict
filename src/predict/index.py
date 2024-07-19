@@ -21,6 +21,14 @@ scaler_cabai_rawit_hijau = joblib.load('storage/scaler_bawang_merah.pkl')
 model_cabai_rawit_merah = load_model('storage/model_bawang_merah.h5')
 scaler_cabai_rawit_merah = joblib.load('storage/scaler_bawang_merah.pkl')
 
+# Define the API endpoint for making predictions, predictions for the next x days, 
+# where x is the number of steps in the future we want to predict.
+# The endpoint expects a POST request with a JSON payload containing the last 30 observations.
+# The endpoint returns a JSON response containing the predicted prices for the next x days.
+# The endpoint uses the pre-trained model and scaler to make predictions.
+# The correct data input is only used on the first day prediction, on the second day and next the first day prediction and next (output) will be used as new data to be used for prediction.
+# example : 0-29 days data input, predict for day 30. day 30 prediction will be used as new data input for day 31 prediction, and so on.
+
 @predict.route('/api')
 def index():
     return "API - Comodity Price Predict"
@@ -39,15 +47,20 @@ def predict_bawang_merah():
     scaled_data = scaler_bawang_merah.transform(np.array(last_observations).reshape(-1, 1))
 
     # Prepare the input data for prediction
-    future_data = scaled_data[-window_size:, :]
+    future_data = scaled_data[-window_size:, :] # 30 last observations
 
     # Predict the next 7 days
     future_steps = 7
     future_predictions = []
     for _ in range(future_steps):
+        # reshape the input data (30, 1) to (1, 30, 1) 
+        # which is the input shape of the model (batch_size, timesteps, features)
         future_input = future_data.reshape((1, window_size, 1))
+        # make a prediction
         future_pred = model_bawang_merah.predict(future_input)
+        # append the prediction to the list
         future_predictions.append(future_pred[0, 0])
+        # update the input data for the next prediction, using the current prediction
         future_data = np.vstack((future_data[1:], future_pred))
 
     # Inverse transform the predictions to the original scale
