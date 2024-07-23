@@ -49,8 +49,8 @@ def predict_bawang_merah():
     # Prepare the input data for prediction
     future_data = scaled_data[-window_size:, :] # 30 last observations
 
-    # Predict the next 7 days
-    future_steps = 7
+    # Predict the next days
+    future_steps = 1
     future_predictions = []
     for _ in range(future_steps):
         # reshape the input data (30, 1) to (1, 30, 1) 
@@ -85,13 +85,18 @@ def predict_cabai_merah_besar():
     # Prepare the input data for prediction
     future_data = scaled_data[-window_size:, :]
 
-    # Predict the next 7 days
-    future_steps = 7
+    # Predict the next days
+    future_steps = 1
     future_predictions = []
     for _ in range(future_steps):
+        # reshape the input data (30, 1) to (1, 30, 1) 
+        # which is the input shape of the model (batch_size, timesteps, features)
         future_input = future_data.reshape((1, window_size, 1))
+        # make a prediction
         future_pred = model_cabai_merah_besar.predict(future_input)
+        # append the prediction to the list
         future_predictions.append(future_pred[0, 0])
+        # update the input data for the next prediction, using the current prediction
         future_data = np.vstack((future_data[1:], future_pred))
 
     # Inverse transform the predictions to the original scale
@@ -116,13 +121,18 @@ def predict_cabai_merah_keriting():
     # Prepare the input data for prediction
     future_data = scaled_data[-window_size:, :]
 
-    # Predict the next 7 days
-    future_steps = 7
+    # Predict the next days
+    future_steps = 1
     future_predictions = []
     for _ in range(future_steps):
+        # reshape the input data (30, 1) to (1, 30, 1) 
+        # which is the input shape of the model (batch_size, timesteps, features)
         future_input = future_data.reshape((1, window_size, 1))
+        # make a prediction
         future_pred = model_cabai_merah_keriting.predict(future_input)
+        # append the prediction to the list
         future_predictions.append(future_pred[0, 0])
+        # update the input data for the next prediction, using the current prediction
         future_data = np.vstack((future_data[1:], future_pred))
 
     # Inverse transform the predictions to the original scale
@@ -147,13 +157,18 @@ def predict_cabai_rawit_hijau():
     # Prepare the input data for prediction
     future_data = scaled_data[-window_size:, :]
 
-    # Predict the next 7 days
-    future_steps = 7
+    # Predict the next days
+    future_steps = 1
     future_predictions = []
     for _ in range(future_steps):
+        # reshape the input data (30, 1) to (1, 30, 1) 
+        # which is the input shape of the model (batch_size, timesteps, features)
         future_input = future_data.reshape((1, window_size, 1))
+        # make a prediction
         future_pred = model_cabai_rawit_hijau.predict(future_input)
+        # append the prediction to the list
         future_predictions.append(future_pred[0, 0])
+        # update the input data for the next prediction, using the current prediction
         future_data = np.vstack((future_data[1:], future_pred))
 
     # Inverse transform the predictions to the original scale
@@ -178,13 +193,18 @@ def predict_cabai_rawit_merah():
     # Prepare the input data for prediction
     future_data = scaled_data[-window_size:, :]
 
-    # Predict the next 7 days
-    future_steps = 7
+    # Predict the next days
+    future_steps = 1
     future_predictions = []
     for _ in range(future_steps):
+        # reshape the input data (30, 1) to (1, 30, 1)
+        # which is the input shape of the model (batch_size, timesteps, features)
         future_input = future_data.reshape((1, window_size, 1))
+        # make a prediction
         future_pred = model_cabai_rawit_merah.predict(future_input)
+        # append the prediction to the list
         future_predictions.append(future_pred[0, 0])
+        # update the input data for the next prediction, using the current prediction
         future_data = np.vstack((future_data[1:], future_pred))
 
     # Inverse transform the predictions to the original scale
