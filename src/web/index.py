@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify, send_from_directory, abort
 import os
 from werkzeug.utils import secure_filename
 import pandas as pd
@@ -67,3 +67,15 @@ def upload_file():
         return jsonify({'message': 'File uploaded successfully'}), 200
     else:
         return jsonify({'error': 'Allowed file type is xlsx'}), 400
+    
+@web.route('/get-example-dataset', methods=['GET'])
+def download_example_dataset():
+    try:
+        # Ensure the file exists in the storage folder
+        if not os.path.isfile(os.path.join(UPLOAD_FOLDER, 'example-dataset.xlsx')):
+            abort(404)
+        
+        # Send the file from the storage folder
+        return send_from_directory(UPLOAD_FOLDER, 'example-dataset.xlsx', as_attachment=True)
+    except Exception as e:
+        return str(e), 500
