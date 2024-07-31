@@ -45,25 +45,33 @@ def validate_file(file_path):
            
 @web.route('/upload-xlsx', methods=['POST'])
 def upload_file():
+    # Check if the post request has the file part
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'}), 400
     
     file = request.files['file']
     
+    # If user does not select file, browser also
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
     
+    # If the file is valid
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file_path = os.path.join(UPLOAD_FOLDER, filename)
         file.save(file_path)
         
+        # Validate the file
         is_valid, message = validate_file(file_path)
         if not is_valid:
             os.remove(file_path)
             return jsonify({'error': message}), 400
         
-        os.rename(file_path, os.path.join(UPLOAD_FOLDER, SAVED_FILENAME))
+        # Rename the file
+        final_path = os.path.join(UPLOAD_FOLDER, SAVED_FILENAME)
+        if os.path.exists(final_path):
+            os.remove(final_path)
+        os.rename(file_path, final_path)
         return jsonify({'message': 'File uploaded successfully'}), 200
     else:
         return jsonify({'error': 'Allowed file type is xlsx'}), 400
