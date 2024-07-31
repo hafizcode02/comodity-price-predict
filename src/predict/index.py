@@ -41,21 +41,35 @@ def index():
     return "API - Comodity Price Predict"
 
 # Validate Request JSON
-def validate_request_data(required_fields):
+def validate_request_data(required_fields, conditional_fields=None):
     data = request.get_json(force=True)
     missing_fields = [field for field in required_fields if field not in data or data[field] is None]
 
     if missing_fields:
         return jsonify({"error": f"Missing or null fields: {', '.join(missing_fields)}"}), 400
+    
+     # Check conditional fields
+    if conditional_fields:
+        for condition, fields in conditional_fields.items():
+            if condition(data):
+                missing_conditional_fields = [field for field in fields if field not in data or data[field] is None]
+                if missing_conditional_fields:
+                    return jsonify({"error": f"Missing or null fields: {', '.join(missing_conditional_fields)}"}), 400
 
     return data
 
 # Predict API
 @predict.route('/api/predict-price-comodity', methods=['POST'])
 def predict_price_comodity():
-    # Required Fields
-    required_fields = ['comodity', 'days_prediction', 'use_raw_data', 'last_observations']
-    validation_result = validate_request_data(required_fields)
+    # Required fields
+    required_fields = ['comodity', 'days_prediction', 'use_raw_data']
+    
+    # Conditional fields: last_observations is required if use_raw_data is True
+    conditional_fields = {
+        lambda data: data.get('use_raw_data', False): ['last_observations']
+    }
+
+    validation_result = validate_request_data(required_fields, conditional_fields)
     
     if isinstance(validation_result, tuple):  # If it's a tuple, it's an error response
         return validation_result
@@ -72,7 +86,7 @@ def predict_price_comodity():
     comodity = data['comodity']
     days_prediction = data['days_prediction']
     use_raw_data = data['use_raw_data']
-    last_observations = data['last_observations']
+    last_observations = data.get('last_observations', [])
     
     # Load the model and scaler based on the comodity
     model = None
