@@ -32,7 +32,7 @@
                             <div class="row clearfix">
                                 <div class="col-lg-4 col-md-8">
                                     <p> <b>Comodity Name</b> </p>
-                                    <select class="form-control show-tick">
+                                    <select class="form-control show-tick" name="comodity" id="comodity">
                                         <option value="">-- Pilih --</option>
                                         <option value="bawang_merah">Bawang Merah</option>
                                         <option value="cabai_merah_besar">Cabai Merah Besar</option>
@@ -43,7 +43,7 @@
                                 </div>
                                 <div class="col-lg-4 col-md-8">
                                     <p> <b>Days Predict</b> </p>
-                                    <select class="form-control show-tick">
+                                    <select class="form-control show-tick" name="days_prediction" id="days_prediction">
                                         <option value="">-- Pilih --</option>
                                         <option value="1">1 Day</option>
                                         <option value="3">3 Days</option>
@@ -116,6 +116,39 @@
 
 <script>
     $(document).ready(function () {
+        $('#prediction_form').submit(function (e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            // Gather form data
+            var comodity = $('#comodity').val();
+            var days_prediction = $('#days_prediction').val();
+
+            // Create the JSON request body
+            var requestData = {
+                comodity: comodity,
+                days_prediction: parseInt(days_prediction),
+                use_raw_data: false // Assuming use_raw_data is always false in this case
+            };
+
+            // Send POST request with JSON data
+            $.ajax({
+                type: 'POST',
+                url: '/api/predict-price-comodity',
+                contentType: 'application/json', // The content type of the request payload
+                data: JSON.stringify(requestData), // Convert the request data to JSON
+                success: function (response) {
+                    // Handle success response
+                    console.log('Success:', response);
+                    alert('Prediction successful! Check console for details.');
+                },
+                error: function (xhr, status, error) {
+                    // Handle error response
+                    console.log('Error:', xhr.responseText);
+                    alert('An error occurred: ' + xhr.responseText);
+                }
+            });
+        });
+
         $('#upload_file_form').submit(function (e) {
             e.preventDefault();
             var form_data = new FormData($('#upload_file_form')[0]);
