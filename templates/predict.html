@@ -42,8 +42,18 @@
                                 href="{{ url_for('web.download_example_dataset') }}">disini</a>.
                         </p>
                     </div>
-                    <div class="body">
-                        <p> # Ini Form Upload Dataset</p>
+                    <div class="body" style="margin-top: -20px;">
+                        <div class="row clearfix">
+                            <form id="upload_file_form" method="POST">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <input type="file" class="form-control" name="file" id="file" />
+                                    </div>
+                                    <button type="submit"
+                                        class="btn btn-sm btn-raised btn-primary waves-effect">Upload</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -72,4 +82,75 @@
 
     </div>
 </div>
+{% endblock %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='assets/plugins/bootstrap-notify/bootstrap-notify.js') }}"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#upload_file_form').submit(function (e) {
+            e.preventDefault();
+            var form_data = new FormData($('#upload_file_form')[0]);
+            $.ajax({
+                type: 'POST',
+                url: '/upload-xlsx',
+                data: form_data,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (data) {
+                    console.log("Success:", data);
+                    $.notify({
+                        message: 'File uploaded successfully!'
+                    }, {
+                        type: 'success',
+                        delay: 2000, // Delay in milliseconds before the alert disappears
+                        placement: {
+                            from: "top",
+                            align: "right"
+                        },
+                        animate: {
+                            enter: 'animated fadeInDown',
+                            exit: 'animated fadeOutUp'
+                        }
+                    });
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log("Error response:", jqXHR.responseText);
+                    var errorMessage = "Unknown error";
+                    try {
+                        // Attempt to parse the response as JSON
+                        if (jqXHR.responseText && jqXHR.getResponseHeader('content-type').includes('application/json')) {
+                            var response = JSON.parse(jqXHR.responseText);
+                            if (response.error) {
+                                errorMessage = response.error;
+                            }
+                        } else {
+                            // Handle non-JSON response
+                            console.log("Non-JSON response:", jqXHR.responseText);
+                            errorMessage = "An unexpected error occurred. Please try again.";
+                        }
+                    } catch (e) {
+                        console.error("Failed to parse error response:", e);
+                    }
+                    $.notify({
+                        message: 'Error: ' + errorMessage
+                    }, {
+                        type: 'danger',
+                        delay: 2000, // Delay in milliseconds before the alert disappears
+                        placement: {
+                            from: "top",
+                            align: "right"
+                        },
+                        animate: {
+                            enter: 'animated fadeInDown',
+                            exit: 'animated fadeOutUp'
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/plugins/bootstrap/css/bootstrap.min.css') }}">
     <!-- Custom Css -->
     <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/amaze.style.min.css') }}">
+    <!-- Animate -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
 </head>
 
 <body class="font-ubuntu">
@@ -40,12 +42,12 @@
     <script src="{{ url_for('static', filename='assets/bundles/libscripts.bundle.js') }}"></script>
     <!-- Lib Scripts Plugin Js ( jquery.v3.2.1, Bootstrap4 js) -->
     <script src="{{ url_for('static', filename='assets/bundles/vendorscripts.bundle.js') }}"></script>
-    <!-- slimscroll, waves Scripts Plugin Js -->
-
+    <!-- Apex Chart  -->
     <script src="{{ url_for('static', filename='assets/bundles/apexcharts.bundle.js') }}"></script>
-
     <script src="{{ url_for('static', filename='assets/bundles/mainscripts.bundle.js') }}"></script>
     <script src="{{ url_for('static', filename='index.js') }}"></script>
+    
+    {% block script %} {% endblock %}
 </body>
 
 </html>
