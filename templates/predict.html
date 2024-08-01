@@ -87,10 +87,10 @@
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                 <div class="card">
                     <div class="header">
-                        <h2>Comodity Price - xxxx</h2>
+                        <h2>Prediksi Harga Komoditas Pangan</h2>
                     </div>
                     <div class="body">
-                        <div id="apex-cabai-merah-besar"></div>
+                        <div id="apex-chart-prediksi"></div>
                     </div>
                 </div>
             </div>
@@ -116,15 +116,99 @@
 
 <script>
     $(document).ready(function () {
+        let chart;
+
+        // Base chart options
+        let baseOptions = {
+            chart: {
+                type: 'area',
+                height: 288,
+                toolbar: {
+                    show: false,
+                },
+            },
+            colors: ['#59c4bc', '#f45b69'], // First color for real data, second for predictions
+            dataLabels: {
+                enabled: false
+            },
+            series: [],
+            markers: {
+                size: 0,
+                style: 'hollow',
+            },
+            xaxis: {
+                type: 'datetime',
+                tickAmount: 6,
+                labels: {
+                    show: true, // Show date labels
+                    datetimeFormatter: {
+                        year: 'yyyy',
+                        month: 'MMM \'yy',
+                        day: 'dd MMM',
+                        hour: 'HH:mm'
+                    }
+                },
+                title: {
+                    text: 'Date'
+                }
+            },
+            tooltip: {
+                x: {
+                    format: 'dd MMM yyyy'
+                }
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 1,
+                    opacityFrom: 0.7,
+                    opacityTo: 0.9,
+                    stops: [0, 100]
+                }
+            },
+            stroke: {
+                show: true,
+                curve: 'smooth',
+                width: 2,
+            },
+            grid: {
+                yaxis: {
+                    lines: {
+                        show: false,
+                    }
+                },
+            },
+            yaxis: {
+                title: {
+                    text: 'Price'
+                },
+                labels: {
+                    formatter: function (value) {
+                        return value.toFixed(0); // Remove decimal places
+                    }
+                }
+            }
+        };
+
+        // Initialize the chart with base options
+        function initializeChart() {
+            chart = new ApexCharts(document.querySelector("#apex-chart-prediksi"), baseOptions);
+            chart.render();
+        }
+
+        initializeChart();
+
+
+        // Handle form submission
         $('#prediction_form').submit(function (e) {
             e.preventDefault(); // Prevent the default form submission
 
             // Gather form data
-            var comodity = $('#comodity').val();
-            var days_prediction = $('#days_prediction').val();
+            let comodity = $('#comodity').val();
+            let days_prediction = $('#days_prediction').val();
 
             // Create the JSON request body
-            var requestData = {
+            let requestData = {
                 comodity: comodity,
                 days_prediction: parseInt(days_prediction),
                 use_raw_data: false // Assuming use_raw_data is always false in this case
@@ -134,24 +218,114 @@
             $.ajax({
                 type: 'POST',
                 url: '/api/predict-price-comodity',
-                contentType: 'application/json', // The content type of the request payload
-                data: JSON.stringify(requestData), // Convert the request data to JSON
+                contentType: 'application/json',
+                data: JSON.stringify(requestData),
                 success: function (response) {
-                    // Handle success response
                     console.log('Success:', response);
-                    alert('Prediction successful! Check console for details.');
+                    $.notify({
+                        message: 'Prediction successful! Check console for details.'
+                    }, {
+                        type: 'success',
+                        delay: 2000, // Delay in milliseconds before the alert disappears
+                        placement: {
+                            from: "top",
+                            align: "right"
+                        },
+                        animate: {
+                            enter: 'animated fadeInDown',
+                            exit: 'animated fadeOutUp'
+                        }
+                    });
+
+                    // Extract dates and prices from response
+                    let dates = response.real_data.dates;
+                    let prices = response.real_data.prices;
+                    let predictions = response.predictions;
+
+                    // Convert dates to a datetime format that ApexCharts can understand
+                    let realData = dates.map(function (date, index) {
+                        return [new Date(date).getTime(), prices[index]];
+                    });
+
+                    // Include the last real data point in the prediction data
+                    let predictionData = [];
+                    if (realData.length > 0) {
+                        predictionData.push(realData[realData.length - 1]); // Last real data point
+                    }
+
+                    // Append predictions to the data, starting from the last date
+                    let lastDate = new Date(dates[dates.length - 1]);
+                    predictions.forEach(function (prediction, index) {
+                        let nextDate = new Date(lastDate);
+                        nextDate.setDate(nextDate.getDate() + index + 1);
+                        predictionData.push([nextDate.getTime(), prediction]);
+                    });
+
+                    // Update the chart with the separated real and prediction data
+                    updateChart(realData, predictionData);
                 },
                 error: function (xhr, status, error) {
-                    // Handle error response
                     console.log('Error:', xhr.responseText);
-                    alert('An error occurred: ' + xhr.responseText);
+                    let errorMessage = "Unknown error";
+                    try {
+                        // Attempt to parse the response as JSON
+                        if (xhr.responseText && xhr.getResponseHeader('content-type').includes('application/json')) {
+                            let response = JSON.parse(xhr.responseText);
+                            if (response.error) {
+                                errorMessage = response.error;
+                            }
+                        } else {
+                            // Handle non-JSON response
+                            console.log("Non-JSON response:", xhr.responseText);
+                            errorMessage = "An unexpected error occurred. Please try again.";
+                        }
+                    } catch (e) {
+                        console.error("Failed to parse error response:", e);
+                    }
+                    $.notify({
+                        message: 'Error: ' + errorMessage
+                    }, {
+                        type: 'danger',
+                        delay: 2000, // Delay in milliseconds before the alert disappears
+                        placement: {
+                            from: "top",
+                            align: "right"
+                        },
+                        animate: {
+                            enter: 'animated fadeInDown',
+                            exit: 'animated fadeOutUp'
+                        }
+                    });
                 }
             });
         });
 
+        function updateChart(realData, predictionData) {
+            // Update the chart with the new data
+            chart.updateOptions({
+                xaxis: {
+                    categories: realData.map(dp => dp[0]), // Extract datetime
+                },
+            });
+
+            chart.updateSeries([
+                {
+                    name: 'Real Price',
+                    data: realData,
+                    color: '#59c4bc' // Color for real data
+                },
+                {
+                    name: 'Predicted Price',
+                    data: predictionData,
+                    color: '#f45b69' // Color for predicted data
+                }
+            ]);
+        }
+
+        // Handle file upload form submission
         $('#upload_file_form').submit(function (e) {
             e.preventDefault();
-            var form_data = new FormData($('#upload_file_form')[0]);
+            let form_data = new FormData($('#upload_file_form')[0]);
             $.ajax({
                 type: 'POST',
                 url: '/upload-xlsx',
@@ -178,11 +352,11 @@
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.log("Error response:", jqXHR.responseText);
-                    var errorMessage = "Unknown error";
+                    let errorMessage = "Unknown error";
                     try {
                         // Attempt to parse the response as JSON
                         if (jqXHR.responseText && jqXHR.getResponseHeader('content-type').includes('application/json')) {
-                            var response = JSON.parse(jqXHR.responseText);
+                            let response = JSON.parse(jqXHR.responseText);
                             if (response.error) {
                                 errorMessage = response.error;
                             }

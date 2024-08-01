@@ -110,10 +110,19 @@ def predict_price_comodity():
     # Ensure we have the right number of observations
     window_size = 30
     
+    # Initialize lists to store real data
+    real_dates = []
+    real_prices = []
+    
     # Check if use the raw data
     if use_raw_data == True:
         if len(last_observations) != window_size:
             return jsonify({'error': 'Provide exactly {} last observations'.format(window_size)}), 400
+        
+        # Since we're using raw data, we can't provide actual dates; assuming last_observations are the actual last prices
+        real_prices = last_observations
+        # Here, you might want to generate synthetic dates if actual dates are not available
+        real_dates = ["N/A"] * window_size  # Placeholder for missing date data
         
         # Scale the input data from last observations
         scaled_data = scaler.transform(np.array(last_observations).reshape(-1, 1))
@@ -125,6 +134,10 @@ def predict_price_comodity():
         df = pd.read_excel(dataset_path)
         df_sorted = df.sort_values(by='date')
         df_sorted_tail = df_sorted.tail(window_size)
+        
+        real_dates = df_sorted_tail['date'].apply(lambda x: int(x.timestamp() * 1000)).tolist()  # Convert dates to string format
+        real_prices = df_sorted_tail[comodity].tolist()
+        
         scaled_data = scaler.transform(df_sorted_tail[comodity].values.reshape(-1, 1))
 
     # Prepare the input data for prediction
@@ -147,5 +160,11 @@ def predict_price_comodity():
     # Inverse transform the predictions to the original scale
     future_predictions = scaler.inverse_transform(np.array(future_predictions).reshape(-1, 1)).flatten().tolist()
 
-    # Return the predictions as a JSON response
-    return jsonify({'predictions': future_predictions})
+    # Return the predictions and real data as a JSON response
+    return jsonify({
+        'predictions': future_predictions,
+        'real_data': {
+            'dates': real_dates,
+            'prices': real_prices
+        }
+    })
