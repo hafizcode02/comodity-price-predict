@@ -8,7 +8,7 @@ df = pd.read_excel('storage/comodity-price.xlsx', parse_dates=['date'])
 # Convert the 'date' to Unix timestamp in milliseconds
 df['unix_timestamp'] = df['date'].apply(lambda x: int(x.timestamp() * 1000))
 
-@comodity.route('/data-cabai-merah-besar')
+@comodity.route('/comodity-data/cabai-merah-besar')
 def data_cabai_merah_besar():
     # Select the required columns and convert to a list of lists
     data_list = df[['unix_timestamp', 'cabai_merah_besar']].values.tolist()
@@ -16,7 +16,7 @@ def data_cabai_merah_besar():
     # Return JSON response
     return jsonify(data=data_list)
 
-@comodity.route('/data-cabai-merah-keriting')
+@comodity.route('/comodity-data/cabai-merah-keriting')
 def data_cabai_merah_keriting():
     # Select the required columns and convert to a list of lists
     data_list = df[['unix_timestamp', 'cabai_merah_keriting']].values.tolist()
@@ -24,7 +24,7 @@ def data_cabai_merah_keriting():
     # Return JSON response
     return jsonify(data=data_list)
 
-@comodity.route('/data-cabai-rawit-hijau')
+@comodity.route('/comodity-data/cabai-rawit-hijau')
 def data_cabai_rawit_hijau():
     # Select the required columns and convert to a list of lists
     data_list = df[['unix_timestamp', 'cabai_rawit_hijau']].values.tolist()
@@ -32,7 +32,7 @@ def data_cabai_rawit_hijau():
     # Return JSON response
     return jsonify(data=data_list)
 
-@comodity.route('/data-cabai-rawit-merah')
+@comodity.route('/comodity-data/cabai-rawit-merah')
 def data_cabai_rawit_merah():
     # Select the required columns and convert to a list of lists
     data_list = df[['unix_timestamp', 'cabai_rawit_merah']].values.tolist()
@@ -40,7 +40,7 @@ def data_cabai_rawit_merah():
     # Return JSON response
     return jsonify(data=data_list)
 
-@comodity.route('/data-bawang-merah')
+@comodity.route('/comodity-data/bawang-merah')
 def data_bawang_merah():
     # Select the required columns and convert to a list of lists
     data_list = df[['unix_timestamp', 'bawang_merah']].values.tolist()

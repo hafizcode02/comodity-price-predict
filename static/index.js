@@ -141,7 +141,7 @@ $(document).ready(function () {
         setupRangeButtons(chartSelector, chart, divIdSelector, minMaxDate);
     }
 
-    fetch('http://localhost:2024/data-cabai-merah-besar')
+    fetch('http://localhost:2024/comodity-data/cabai-merah-besar')
         .then(response => response.json())
         .then(data => {
             let minMaxDate = getMinMaxDates(data.data);
@@ -149,7 +149,7 @@ $(document).ready(function () {
         })
         .catch(error => console.error('Error fetching data for chart cabai-merah-besar:', error));
 
-    fetch('http://localhost:2024/data-cabai-merah-keriting')
+    fetch('http://localhost:2024/comodity-data/cabai-merah-keriting')
         .then(response => response.json())
         .then(data => {
             let minMaxDate = getMinMaxDates(data.data);
@@ -157,7 +157,7 @@ $(document).ready(function () {
         })
         .catch(error => console.error('Error fetching data for chart cabai-merah-keriting:', error));
 
-    fetch('http://localhost:2024/data-cabai-rawit-merah')
+    fetch('http://localhost:2024/comodity-data/cabai-rawit-merah')
         .then(response => response.json())
         .then(data => {
             let minMaxDate = getMinMaxDates(data.data);
@@ -165,7 +165,7 @@ $(document).ready(function () {
         })
         .catch(error => console.error('Error fetching data for chart cabai-rawit-merah:', error));
 
-    fetch('http://localhost:2024/data-cabai-rawit-hijau')
+    fetch('http://localhost:2024/comodity-data/cabai-rawit-hijau')
         .then(response => response.json())
         .then(data => {
             let minMaxDate = getMinMaxDates(data.data);
@@ -173,7 +173,7 @@ $(document).ready(function () {
         })
         .catch(error => console.error('Error fetching data for chart cabai-rawit-hijau:', error));
 
-    fetch('http://localhost:2024/data-bawang-merah')
+    fetch('http://localhost:2024/comodity-data/bawang-merah')
         .then(response => response.json())
         .then(data => {
             let minMaxDate = getMinMaxDates(data.data);
