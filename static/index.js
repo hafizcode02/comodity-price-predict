@@ -131,6 +131,10 @@ $(document).ready(function () {
     // Function to clone base options and customize
     function createChartOptions(baseOptions, seriesName, seriesData, color, chartSelector, minMaxDate, divIdSelector) {
         let options = JSON.parse(JSON.stringify(baseOptions));
+
+        // Round the data values to remove decimals
+        seriesData = seriesData.map(([timestamp, value]) => [timestamp, Math.round(value)]);
+
         options.series[0].name = seriesName;
         options.series[0].data = seriesData;
         options.colors = [color];
