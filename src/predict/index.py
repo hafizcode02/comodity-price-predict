@@ -126,6 +126,9 @@ def predict_price_comodity():
         
         # Scale the input data from last observations
         scaled_data = scaler.transform(np.array(last_observations).reshape(-1, 1))
+        
+        # Round comma to 6 decimal
+        scaled_data = np.round(scaled_data, 6)
     else:
         # Load the dataset
         if not os.path.exists(dataset_path):
@@ -139,6 +142,9 @@ def predict_price_comodity():
         real_prices = df_sorted_tail[comodity].tolist()
         
         scaled_data = scaler.transform(df_sorted_tail[comodity].values.reshape(-1, 1))
+        
+        # Round comma to 6 decimal
+        scaled_data = np.round(scaled_data, 6)
 
     # Prepare the input data for prediction
     future_data = scaled_data[-window_size:, :] # 30 last observations
