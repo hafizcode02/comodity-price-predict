@@ -39,7 +39,7 @@ def gru_forward(x, h_prev, kernel, recurrent_kernel, bias):
 
 # Load the MinMaxScaler object from the pickle file using joblib
 try:
-    scaler = joblib.load('E:/Braincore/skripsi/comodity-price-predict/manual_calculation/scal.pkl')
+    scaler = joblib.load('E:/Braincore/skripsi/comodity-price-predict/manual_calculation/scalar.pkl')
     print("Loaded MinMaxScaler object")
 except FileNotFoundError:
     print("Error: 'scal.pkl' file not found. Please ensure the file exists in the specified directory.")
