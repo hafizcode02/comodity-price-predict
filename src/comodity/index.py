@@ -1,12 +1,27 @@
 from flask import Blueprint, render_template, request, jsonify
 import pandas as pd
+import os
 
 comodity = Blueprint('comodity', __name__)
 
-# Load the Excel file
-df = pd.read_excel('storage/dataset.xlsx', parse_dates=['date'])
-# Convert the 'date' to Unix timestamp in milliseconds
-df['unix_timestamp'] = df['date'].apply(lambda x: int(x.timestamp() * 1000))
+df = None
+
+@comodity.before_request
+def load_and_process_excel():
+    """
+    This function will run before every request in this blueprint.
+    It loads and processes the Excel file.
+    """
+    global df
+    if df is None:
+        file_path = 'storage/dataset.xlsx'
+        if os.path.exists(file_path):
+            # Load the Excel file
+            df = pd.read_excel(file_path, parse_dates=['date'])
+            # Convert the 'date' to Unix timestamp in milliseconds
+            df['unix_timestamp'] = df['date'].apply(lambda x: int(x.timestamp() * 1000))
+        else:
+            return jsonify({'error': 'File not found'}), 404
 
 @comodity.route('/comodity-data/cabai-merah-besar')
 def data_cabai_merah_besar():
