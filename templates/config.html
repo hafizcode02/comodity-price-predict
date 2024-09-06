@@ -1,0 +1,219 @@
+{% extends 'layouts/base.html' %}
+
+{% block body %}
+<!-- Main Content -->
+<div class="body_area">
+    <div class="block-header">
+        <div class="container">
+            <div class="row clearfix d-flex justify-content-between align-items-center">
+                <div class="col-lg-6 col-md-12">
+                    <ul class="breadcrumb pl-0 pb-0 ">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active">Price Predict</li>
+                    </ul>
+                    <h1 class="mb-1 mt-1">Prediksi Harga Komoditas Pangan - Konfigurasi</h1>
+                </div>
+                <div class="col-lg-6 col-md-12 text-right">
+                    <a href="https://colab.research.google.com/drive/1unPNwtq-riSkyGgsINkloiJPTGNe6aSO?usp=sharing"
+                        target="_blank" class="btn btn-lg btn-success" style="color: #fff;">Latih Model</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-xl-7 col-lg-7 col-md-7 col-sm-12">
+                <div class="card">
+                    <div class="header">
+                        <h2>Konfigurasi Website Prediksi Harga Komoditas Pangan - Pasar Kramat Kota Cirebon</h2>
+                        <p class="mt-3" style="margin-bottom: unset;">Pada halaman ini, kamu dapat merubah berkas model
+                            yang berekstensi
+                            (.h5) dan (.pkl) pada setiap komoditas berdasarkan hasil pelatihan yang dilakukan dengan
+                            data yang lebih baru.</p>
+                    </div>
+                    <div class="body">
+                        <form method="POST" id="prediction_form">
+                            <div class="row clearfix">
+                                <div class="col-lg-10 col-md-10 mb-3">
+                                    <p> <b>Nama Komoditas</b> </p>
+                                    <select class="form-control show-tick" name="comodity" id="comodity">
+                                        <option value="">-- Pilih --</option>
+                                        <option value="bawang_merah">Bawang Merah</option>
+                                        <option value="cabai_merah_besar">Cabai Merah Besar</option>
+                                        <option value="cabai_merah_keriting">Cabai Merah Keriting</option>
+                                        <option value="cabai_rawit_hijau">Cabai Rawit Hijau</option>
+                                        <option value="cabai_rawit_merah">Cabai Rawit Merah</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-lg-5 col-md-5 mb-3">
+                                    <p> <b>Upload Model (.h5) file</b> </p>
+                                    <input type="file" class="form-control" name="model_file" id="model_file" />
+                                </div>
+
+                                <div class="col-lg-5 col-md-5 mb-3">
+                                    <p> <b>Upload Pickle (.pkl) file</b> </p>
+                                    <input type="file" class="form-control" name="pickle_file" id="pickle_file" />
+                                </div>
+
+                                <div class="col-lg-12 col-md-12 mt-1">
+                                    <button type="submit"
+                                        class="btn btn-raised btn-primary waves-effect">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-5 col-lg-5 col-md-5 col-sm-5">
+                <div class="card">
+                    <div class="header">
+                        <h2>Daftar Berkas Model & Pickle</h2>
+                    </div>
+                    <div class="body" style="margin-top: -20px;">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Nama</th>
+                                        <th>Terakhir di perbaharui</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Model Bawang Merah</td>
+                                        <td>2021-12-21</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pickle Bawang Merah</td>
+                                        <td>2021-12-21</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Model Cabai Merah Besar</td>
+                                        <td>2021-12-21</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pickle Cabai Merah Besar</td>
+                                        <td>2021-12-21</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Model Cabai Merah Rawit</td>
+                                        <td>2021-12-21</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pickle Cabai Merah Rawit</td>
+                                        <td>2021-12-21</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Model Cabai Rawit Hijau</td>
+                                        <td>2021-12-21</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pickle Cabai Rawit Hijau</td>
+                                        <td>2021-12-21</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Model Cabai Rawit Merah</td>
+                                        <td>2021-12-21</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Pickle Cabai Rawit Merah</td>
+                                        <td>2021-12-21</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row clearfix">
+            <div class="col-md-12 col-lg-12">
+                <div class="card">
+                    <div class="body">
+                        <p class="copyright mb-0">Copyright 2024 © All Rights Reserved. <a
+                                href="https://hafizcaniago.my.id/" target="_blank">Hafiz Caniago</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='assets/plugins/bootstrap-notify/bootstrap-notify.js') }}"></script>
+
+<script>
+    $(document).ready(function () {
+        // Handle file upload form submission
+        $('#upload_file_form').submit(function (e) {
+            e.preventDefault();
+            let form_data = new FormData($('#upload_file_form')[0]);
+            $.ajax({
+                type: 'POST',
+                url: '/upload-xlsx',
+                data: form_data,
+                contentType: false,
+                cache: false,
+                processData: false,
+                success: function (data) {
+                    console.log("Success:", data);
+                    $.notify({
+                        message: 'File uploaded successfully!'
+                    }, {
+                        type: 'success',
+                        delay: 2000, // Delay in milliseconds before the alert disappears
+                        placement: {
+                            from: "top",
+                            align: "right"
+                        },
+                        animate: {
+                            enter: 'animated fadeInDown',
+                            exit: 'animated fadeOutUp'
+                        }
+                    });
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log("Error response:", jqXHR.responseText);
+                    let errorMessage = "Unknown error";
+                    try {
+                        // Attempt to parse the response as JSON
+                        if (jqXHR.responseText && jqXHR.getResponseHeader('content-type').includes('application/json')) {
+                            let response = JSON.parse(jqXHR.responseText);
+                            if (response.error) {
+                                errorMessage = response.error;
+                            }
+                        } else {
+                            // Handle non-JSON response
+                            console.log("Non-JSON response:", jqXHR.responseText);
+                            errorMessage = "An unexpected error occurred. Please try again.";
+                        }
+                    } catch (e) {
+                        console.error("Failed to parse error response:", e);
+                    }
+                    $.notify({
+                        message: 'Error: ' + errorMessage
+                    }, {
+                        type: 'danger',
+                        delay: 2000, // Delay in milliseconds before the alert disappears
+                        placement: {
+                            from: "top",
+                            align: "right"
+                        },
+                        animate: {
+                            enter: 'animated fadeInDown',
+                            exit: 'animated fadeOutUp'
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
