@@ -23,17 +23,17 @@ dataset_path = 'storage/dataset.xlsx'
 model_bawang_merah = load_model('storage/model_bawang_merah.h5')
 scaler_bawang_merah = joblib.load('storage/scaler_bawang_merah.pkl')
 
-model_cabai_merah_besar = load_model('storage/model_bawang_merah.h5')
-scaler_cabai_merah_besar = joblib.load('storage/scaler_bawang_merah.pkl')
+model_cabai_merah_besar = load_model('storage/model_cabai_merah_besar.h5')
+scaler_cabai_merah_besar = joblib.load('storage/scaler_cabai_merah_besar.pkl')
 
-model_cabai_merah_keriting = load_model('storage/model_bawang_merah.h5')
-scaler_cabai_merah_keriting = joblib.load('storage/scaler_bawang_merah.pkl')
+model_cabai_merah_keriting = load_model('storage/model_cabai_merah_keriting.h5')
+scaler_cabai_merah_keriting = joblib.load('storage/scaler_cabai_merah_keriting.pkl')
 
-model_cabai_rawit_hijau = load_model('storage/model_bawang_merah.h5')
-scaler_cabai_rawit_hijau = joblib.load('storage/scaler_bawang_merah.pkl')
+model_cabai_rawit_hijau = load_model('storage/model_cabai_rawit_hijau.h5')
+scaler_cabai_rawit_hijau = joblib.load('storage/scaler_cabai_rawit_hijau.pkl')
 
-model_cabai_rawit_merah = load_model('storage/model_bawang_merah.h5')
-scaler_cabai_rawit_merah = joblib.load('storage/scaler_bawang_merah.pkl')
+model_cabai_rawit_merah = load_model('storage/model_cabai_rawit_merah.h5')
+scaler_cabai_rawit_merah = joblib.load('storage/scaler_cabai_rawit_merah.pkl')
 
 # Base Route
 @predict.route('/api')
