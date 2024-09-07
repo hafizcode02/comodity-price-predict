@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify, send_from_directory, abort
 import os
 from werkzeug.utils import secure_filename
-import time
+from datetime import datetime
 import pandas as pd
 
 config = Blueprint('config', __name__, template_folder='templates')
@@ -92,19 +92,28 @@ def download_example_dataset():
     
 # Get Metadata Route
 ## Returns the metadata of model and pickle file
+
+## format time
+def format_time(timestamp):
+    months = [
+        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ]
+    dt = datetime.fromtimestamp(timestamp)  # Convert the timestamp to a datetime object
+    formatted_time = dt.strftime(f"%d {months[dt.month - 1]} %Y %H:%M")  # Custom format with month names
+    return formatted_time
+
 ## Fungsi untuk mengambil metadata file
 def get_file_metadata(file_path):
     # Mengecek apakah file ada
     if os.path.exists(file_path):
-        # Mendapatkan waktu pembuatan dan modifikasi
-        creation_time = time.ctime(os.path.getctime(file_path))
-        modification_time = time.ctime(os.path.getmtime(file_path))
+        # Mendapatkan waktu modifikasi file
+        modification_time = os.path.getmtime(file_path)  # Get the Unix timestamp directly
         
         # Mengembalikan data dalam bentuk dictionary
         return {
             "file_name": os.path.basename(file_path),
-            "creation_time": creation_time,
-            "modification_time": modification_time
+            "uploaded_time": format_time(modification_time),  # Pass timestamp to format_time
         }
     else:
         return {
@@ -117,7 +126,15 @@ def get_files_metadata():
     # Daftar file yang akan diambil metadatanya
     files = [
         './storage/model_bawang_merah.h5',
-        './storage/scaler_bawang_merah.pkl'
+        './storage/scaler_bawang_merah.pkl',
+        './storage/model_cabai_merah_besar.h5',
+        './storage/scaler_cabai_merah_besar.pkl',
+        './storage/model_cabai_merah_keriting.h5',
+        './storage/scaler_cabai_merah_keriting.pkl',
+        './storage/model_cabai_rawit_hijau.h5',
+        './storage/scaler_cabai_rawit_hijau.pkl',
+        './storage/model_cabai_rawit_merah.h5',
+        './storage/scaler_cabai_rawit_merah.pkl'
     ]
 
     # Ambil metadata dari setiap file
