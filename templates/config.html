@@ -34,11 +34,11 @@
                             data yang lebih baru.</p>
                     </div>
                     <div class="body">
-                        <form method="POST" id="prediction_form">
+                        <form method="POST" id="upload_form">
                             <div class="row clearfix">
                                 <div class="col-lg-10 col-md-10 mb-3">
                                     <p> <b>Nama Komoditas</b> </p>
-                                    <select class="form-control show-tick" name="comodity" id="comodity">
+                                    <select class="form-control show-tick" name="nama_komoditas" id="nama_komoditas">
                                         <option value="">-- Pilih --</option>
                                         <option value="bawang_merah">Bawang Merah</option>
                                         <option value="cabai_merah_besar">Cabai Merah Besar</option>
@@ -50,12 +50,13 @@
 
                                 <div class="col-lg-5 col-md-5 mb-3">
                                     <p> <b>Upload Model (.h5) file</b> </p>
-                                    <input type="file" class="form-control" name="model_file" id="model_file" />
+                                    <input type="file" class="form-control" name="file_model_h5" id="file_model_h5" />
                                 </div>
 
                                 <div class="col-lg-5 col-md-5 mb-3">
                                     <p> <b>Upload Pickle (.pkl) file</b> </p>
-                                    <input type="file" class="form-control" name="pickle_file" id="pickle_file" />
+                                    <input type="file" class="form-control" name="file_scaler_pkl"
+                                        id="file_scaler_pkl" />
                                 </div>
 
                                 <div class="col-lg-12 col-md-12 mt-1">
@@ -152,12 +153,12 @@
 <script>
     $(document).ready(function () {
         // Handle file upload form submission
-        $('#upload_file_form').submit(function (e) {
+        $('#upload_form').submit(function (e) {
             e.preventDefault();
-            let form_data = new FormData($('#upload_file_form')[0]);
+            let form_data = new FormData(this);
             $.ajax({
                 type: 'POST',
-                url: '/upload-xlsx',
+                url: '/config/upload-model-scaler',
                 data: form_data,
                 contentType: false,
                 cache: false,
@@ -165,7 +166,7 @@
                 success: function (data) {
                     console.log("Success:", data);
                     $.notify({
-                        message: 'File uploaded successfully!'
+                        message: 'Model dan Skalar berhasil diupload!'
                     }, {
                         type: 'success',
                         delay: 2000, // Delay in milliseconds before the alert disappears
