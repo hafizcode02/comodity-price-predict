@@ -76,7 +76,7 @@
                     </div>
                     <div class="body" style="margin-top: -20px;">
                         <div class="table-responsive">
-                            <table class="table">
+                            <table class="table" id="file-table">
                                 <thead>
                                     <tr>
                                         <th>Nama</th>
@@ -84,45 +84,45 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                    <tr data-file="model_bawang_merah.h5">
                                         <td>Model Bawang Merah</td>
-                                        <td>2021-12-21</td>
+                                        <td class="updated-time">-</td>
                                     </tr>
-                                    <tr>
+                                    <tr data-file="scaler_bawang_merah.pkl">
                                         <td>Pickle Bawang Merah</td>
-                                        <td>2021-12-21</td>
+                                        <td class="updated-time">-</td>
                                     </tr>
-                                    <tr>
+                                    <tr data-file="model_cabai_merah_besar.h5">
                                         <td>Model Cabai Merah Besar</td>
-                                        <td>2021-12-21</td>
+                                        <td class="updated-time">-</td>
                                     </tr>
-                                    <tr>
+                                    <tr data-file="scaler_cabai_merah_besar.pkl">
                                         <td>Pickle Cabai Merah Besar</td>
-                                        <td>2021-12-21</td>
+                                        <td class="updated-time">-</td>
                                     </tr>
-                                    <tr>
-                                        <td>Model Cabai Merah Rawit</td>
-                                        <td>2021-12-21</td>
+                                    <tr data-file="model_cabai_merah_keriting.h5">
+                                        <td>Model Cabai Merah Keriting</td>
+                                        <td class="updated-time">-</td>
                                     </tr>
-                                    <tr>
-                                        <td>Pickle Cabai Merah Rawit</td>
-                                        <td>2021-12-21</td>
+                                    <tr data-file="scaler_cabai_merah_keriting.pkl">
+                                        <td>Pickle Cabai Merah Keriting</td>
+                                        <td class="updated-time">-</td>
                                     </tr>
-                                    <tr>
+                                    <tr data-file="model_cabai_rawit_hijau.h5">
                                         <td>Model Cabai Rawit Hijau</td>
-                                        <td>2021-12-21</td>
+                                        <td class="updated-time">-</td>
                                     </tr>
-                                    <tr>
+                                    <tr data-file="scaler_cabai_rawit_hijau.pkl">
                                         <td>Pickle Cabai Rawit Hijau</td>
-                                        <td>2021-12-21</td>
+                                        <td class="updated-time">-</td>
                                     </tr>
-                                    <tr>
+                                    <tr data-file="model_cabai_rawit_merah.h5">
                                         <td>Model Cabai Rawit Merah</td>
-                                        <td>2021-12-21</td>
+                                        <td class="updated-time">-</td>
                                     </tr>
-                                    <tr>
+                                    <tr data-file="scaler_cabai_rawit_merah.pkl">
                                         <td>Pickle Cabai Rawit Merah</td>
-                                        <td>2021-12-21</td>
+                                        <td class="updated-time">-</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -214,6 +214,24 @@
                     });
                 }
             });
+        });
+
+        // Fetch file metadata on page load
+        $.ajax({
+            type: 'GET',
+            url: '/config/get-file-metadata',
+            success: function (data) {
+                // Iterate over the response to update table rows
+                data.forEach(function (file) {
+                    // Find the table row corresponding to the file name
+                    let row = $(`#file-table tr[data-file='${file.file_name}']`);
+                    // Update the "Terakhir di perbaharui" column
+                    row.find('.updated-time').text(file.uploaded_time);
+                });
+            },
+            error: function (error) {
+                console.error("Error fetching file metadata:", error);
+            }
         });
     });
 </script>
