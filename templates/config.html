@@ -152,6 +152,29 @@
 
 <script>
     $(document).ready(function () {
+        // Fungsi untuk mendapatkan metadata file dan memperbarui tampilan tabel
+        function fetchFileMetadata() {
+            $.ajax({
+                type: 'GET',
+                url: '/config/get-file-metadata',
+                success: function (data) {
+                    // Iterate over the response to update table rows
+                    data.forEach(function (file) {
+                        // Find the table row corresponding to the file name
+                        let row = $(`#file-table tr[data-file='${file.file_name}']`);
+                        // Update the "Terakhir di perbaharui" column
+                        row.find('.updated-time').text(file.uploaded_time);
+                    });
+                },
+                error: function (error) {
+                    console.error("Error fetching file metadata:", error);
+                }
+            });
+        }
+
+        // Fetch file metadata on page load
+        fetchFileMetadata();
+
         // Handle file upload form submission
         $('#upload_form').submit(function (e) {
             e.preventDefault();
@@ -179,6 +202,9 @@
                             exit: 'animated fadeOutUp'
                         }
                     });
+
+                    // After successful upload, fetch the updated file metadata
+                    fetchFileMetadata(); // Call function to refresh metadata
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.log("Error response:", jqXHR.responseText);
@@ -214,24 +240,6 @@
                     });
                 }
             });
-        });
-
-        // Fetch file metadata on page load
-        $.ajax({
-            type: 'GET',
-            url: '/config/get-file-metadata',
-            success: function (data) {
-                // Iterate over the response to update table rows
-                data.forEach(function (file) {
-                    // Find the table row corresponding to the file name
-                    let row = $(`#file-table tr[data-file='${file.file_name}']`);
-                    // Update the "Terakhir di perbaharui" column
-                    row.find('.updated-time').text(file.uploaded_time);
-                });
-            },
-            error: function (error) {
-                console.error("Error fetching file metadata:", error);
-            }
         });
     });
 </script>
