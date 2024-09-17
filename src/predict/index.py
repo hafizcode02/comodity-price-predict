@@ -148,6 +148,7 @@ def predict_price_comodity():
 
     # Prepare the input data for prediction
     future_data = scaled_data[-window_size:, :] # 30 last observations
+    print(future_data)
 
     # Predict the next days
     future_steps = days_prediction
