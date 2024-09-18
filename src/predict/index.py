@@ -19,22 +19,6 @@ predict = Blueprint('predict', __name__)
 # Define the path to the dataset
 dataset_path = 'storage/dataset.xlsx'
 
-# Load the pre-trained model and scaler
-model_bawang_merah = load_model('storage/model_bawang_merah.h5')
-scaler_bawang_merah = joblib.load('storage/scaler_bawang_merah.pkl')
-
-model_cabai_merah_besar = load_model('storage/model_cabai_merah_besar.h5')
-scaler_cabai_merah_besar = joblib.load('storage/scaler_cabai_merah_besar.pkl')
-
-model_cabai_merah_keriting = load_model('storage/model_cabai_merah_keriting.h5')
-scaler_cabai_merah_keriting = joblib.load('storage/scaler_cabai_merah_keriting.pkl')
-
-model_cabai_rawit_hijau = load_model('storage/model_cabai_rawit_hijau.h5')
-scaler_cabai_rawit_hijau = joblib.load('storage/scaler_cabai_rawit_hijau.pkl')
-
-model_cabai_rawit_merah = load_model('storage/model_cabai_rawit_merah.h5')
-scaler_cabai_rawit_merah = joblib.load('storage/scaler_cabai_rawit_merah.pkl')
-
 # Base Route
 @predict.route('/api')
 def index():
@@ -92,20 +76,20 @@ def predict_price_comodity():
     model = None
     scaler = None
     if comodity == 'bawang_merah':
-        model = model_bawang_merah
-        scaler = scaler_bawang_merah
+        model = load_model('storage/model_bawang_merah.h5')
+        scaler = joblib.load('storage/scaler_bawang_merah.pkl')
     elif comodity == 'cabai_merah_besar':
-        model = model_cabai_merah_besar
-        scaler = scaler_cabai_merah_besar
+        model = load_model('storage/model_cabai_merah_besar.h5')
+        scaler = joblib.load('storage/scaler_cabai_merah_besar.pkl')
     elif comodity == 'cabai_merah_keriting':
-        model = model_cabai_merah_keriting
-        scaler = scaler_cabai_merah_keriting
+        model = load_model('storage/model_cabai_merah_keriting.h5')
+        scaler = joblib.load('storage/scaler_cabai_merah_keriting.pkl')
     elif comodity == 'cabai_rawit_hijau':
-        model = model_cabai_rawit_hijau
-        scaler = scaler_cabai_rawit_hijau
+        model = load_model('storage/model_cabai_rawit_hijau.h5')
+        scaler = joblib.load('storage/scaler_cabai_rawit_hijau.pkl')
     elif comodity == 'cabai_rawit_merah':
-        model = model_cabai_rawit_merah
-        scaler = scaler_cabai_rawit_merah
+        model = load_model('storage/model_cabai_rawit_merah.h5')
+        scaler = joblib.load('storage/scaler_cabai_rawit_merah.pkl')
 
     # Ensure we have the right number of observations
     window_size = 30
@@ -134,7 +118,7 @@ def predict_price_comodity():
         if not os.path.exists(dataset_path):
             return jsonify({'error': 'Dataset not found, upload the .xlsx file first'}), 404
         
-        df = pd.read_excel(dataset_path)
+        df = pd.read_excel(dataset_path, parse_dates=['date'])
         df_sorted = df.sort_values(by='date')
         df_sorted_tail = df_sorted.tail(window_size)
         
