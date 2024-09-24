@@ -33,11 +33,11 @@ def validate_dataset_file(file_path):
         df = pd.read_excel(file_path)
         # Check for required columns
         if list(df.columns) != REQUIRED_COLUMNS:
-            return False, 'Invalid columns. The file must contain the following columns: ' + ', '.join(REQUIRED_COLUMNS)
+            return False, 'Kolom Tidak Sesuai. File harus memuat kolom berikut : ' + ', '.join(REQUIRED_COLUMNS)
         
         # Check for minimum number of rows
         if len(df) < MINIMUM_ROWS:
-            return False, 'The file must contain at least {} rows of data excluding the header.'.format(MINIMUM_ROWS)
+            return False, 'File harus memuat setidaknya {} baris data, tanpa menghitung baris judul.'.format(MINIMUM_ROWS)
         
         return True, 'File is valid'
     except Exception as e:
@@ -48,13 +48,13 @@ def validate_dataset_file(file_path):
 def upload_file():
     # Check if the post request has the file part
     if 'file' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
+        return jsonify({'error': 'Tidak ada file di request body!'}), 400
     
     file = request.files['file']
     
     # If user does not select file, browser also
     if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
+        return jsonify({'error': 'File tidak dipilih!'}), 400
     
     # If the file is valid
     if file and allowed_file(file.filename, ALLOWED_EXTENSIONS_DATASET):
@@ -73,9 +73,9 @@ def upload_file():
         if os.path.exists(final_path):
             os.remove(final_path)
         os.rename(file_path, final_path)
-        return jsonify({'message': 'File uploaded successfully'}), 200
+        return jsonify({'message': 'File berhasil diuplaod'}), 200
     else:
-        return jsonify({'error': 'Allowed file type is xlsx'}), 400
+        return jsonify({'error': 'File yang diperbolehkan hanya berformat excel (.xlsx)'}), 400
 
 # Download Example Dataset Route
 @config.route('/config/get-example-dataset', methods=['GET'])
@@ -174,6 +174,6 @@ def upload_model_scaler():
     file_model_h5.save(model_path)
     file_scaler_pkl.save(scaler_path)
 
-    return jsonify({"message": "Files uploaded successfully", 
+    return jsonify({"message": "File berhasil di upload!", 
                     "model_file": model_filename, 
                     "scaler_file": scaler_filename})
