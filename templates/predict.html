@@ -36,8 +36,8 @@
                                     <div class="form-group">
                                         <input type="file" class="form-control" name="file" id="file" />
                                     </div>
-                                    <button type="submit"
-                                        class="btn btn-sm btn-raised btn-primary waves-effect" style="margin-left: 280px;">Upload</button>
+                                    <button type="submit" class="btn btn-sm btn-raised btn-primary waves-effect"
+                                        style="margin-left: 280px;">Upload</button>
                                 </div>
                             </form>
                         </div>
@@ -369,6 +369,12 @@
                     } catch (e) {
                         console.error("Failed to parse error response:", e);
                     }
+
+                    //Mark the input field with an error class
+                    $('#file').addClass('is-invalid');
+
+                    // Add an error message below the file input
+                    $('<div id="file-error" class="invalid-feedback">Error: ' + errorMessage + '</div>').insertAfter('#file');
                     $.notify({
                         message: 'Error: ' + errorMessage
                     }, {
