@@ -50,33 +50,49 @@ normalized_data = (price_data - min_value) / (max_value - min_value)
 normalized_data = normalized_data.reshape((1, 30, 1))  # Reshape to (batch_size, time_steps, features)
 
 # Initialize weights and biases
-lstm_units = 4
-gru_units = 4
+lstm_units = 2
+gru_units = 2
 output_units = 1
 
 # LSTM weights
 lstm_kernel = np.random.randn(1, 4 * lstm_units)  # (input_features, 4 * units)
+print("LSTM Kernel : ", lstm_kernel)
 lstm_recurrent_kernel = np.random.randn(lstm_units, 4 * lstm_units)  # (units, 4 * units)
+print("LSTM Reccurent Kernel : ", lstm_recurrent_kernel)
 lstm_bias = np.random.randn(4 * lstm_units)  # (4 * units)
+print("LSTM Bias : ", lstm_bias)
+print("==============================================")
 
 # GRU weights
 gru_kernel = np.random.randn(lstm_units, 3 * gru_units)  # (lstm_units, 3 * gru_units)
+print("GRU Kernel : ", gru_kernel)
 gru_recurrent_kernel = np.random.randn(gru_units, 3 * gru_units)  # (gru_units, 3 * gru_units)
+print("GRU Reccurent Kernel : ", gru_recurrent_kernel)
 gru_bias = np.random.randn(3 * gru_units)  # (3 * gru_units)
+print("GRU Bias : ", gru_bias)
+print("==============================================")
 
 # Dense layer weights
 dense_kernel = np.random.randn(gru_units, output_units)  # (gru_units, output_units)
+print("Dense Kernel : ", dense_kernel)
 dense_bias = np.random.randn(output_units)  # (output_units)
+print("Dense Bias : ", dense_bias)
+print("==============================================")
 
 # LSTM forward pass for all time steps
 h_lstm = np.zeros((1, 30, lstm_units))
+print("H LSTM : ", h_lstm)
 c_lstm = np.zeros((1, lstm_units))
+print("C LSTM : ", c_lstm)
 
 for t in range(30):
     h_lstm[:, t, :], c_lstm = lstm_forward(
         normalized_data[:, t, :], h_lstm[:, t-1, :] if t > 0 else np.zeros((1, lstm_units)), c_lstm,
         lstm_kernel, lstm_recurrent_kernel, lstm_bias
     )
+
+print("H LSTM : ", h_lstm)
+print("")
 
 # GRU forward pass
 h_gru = np.zeros((1, gru_units))
