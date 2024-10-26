@@ -100,21 +100,37 @@ bias_gru_candidate = np.array([
     [-1.188044, -1.0855407,  0.0815194,  0.09651377, -0.04127811, 0.01440805]
 ])
 
-# GRU cell computations (with customized bias handling)
+# # GRU cell computations (with customized bias handling)
+# def gru_step(x, h_prev):
+#     z = np.dot(x, kernel_gru) + np.dot(h_prev, recurrent_kernel_gru)
+    
+#     # Split into reset, update, and candidate gates
+#     r, z, h_bar = np.split(z, 3, axis=-1)
+    
+#     # Apply the bias components for reset/update and candidate gates
+#     r += bias_gru_reset_update[:, :units_gru].reshape(-1)  # Reshape bias to match shape of r
+#     z += bias_gru_reset_update[:, units_gru:2*units_gru].reshape(-1)  # Reshape bias to match shape of z
+#     h_bar += bias_gru_candidate[:, 2*units_gru:].reshape(-1)  # Reshape bias to match shape of h_bar
+
+#     r = 1 / (1 + np.exp(-r))  # Sigmoid
+#     z = 1 / (1 + np.exp(-z))  # Sigmoid
+#     h_bar = np.tanh(np.dot(x, kernel_gru[:, 2*units_gru:]) + r * np.dot(h_prev, recurrent_kernel_gru[:, 2*units_gru:]))
+#     h = z * h_prev + (1 - z) * h_bar
+#     return h
+
+# Revised GRU cell computations
 def gru_step(x, h_prev):
     z = np.dot(x, kernel_gru) + np.dot(h_prev, recurrent_kernel_gru)
-    
-    # Split into reset, update, and candidate gates
     r, z, h_bar = np.split(z, 3, axis=-1)
-    
-    # Apply the bias components for reset/update and candidate gates
-    r += bias_gru_reset_update[:, :units_gru].reshape(-1)  # Reshape bias to match shape of r
-    z += bias_gru_reset_update[:, units_gru:2*units_gru].reshape(-1)  # Reshape bias to match shape of z
-    h_bar += bias_gru_candidate[:, 2*units_gru:].reshape(-1)  # Reshape bias to match shape of h_bar
-
-    r = 1 / (1 + np.exp(-r))  # Sigmoid
-    z = 1 / (1 + np.exp(-z))  # Sigmoid
-    h_bar = np.tanh(np.dot(x, kernel_gru[:, 2*units_gru:]) + r * np.dot(h_prev, recurrent_kernel_gru[:, 2*units_gru:]))
+    r += bias_gru_reset_update[:, :units_gru].reshape(-1)
+    r = 1 / (1 + np.exp(-r))
+    z += bias_gru_reset_update[:, units_gru:2*units_gru].reshape(-1)
+    z = 1 / (1 + np.exp(-z))
+    h_bar = np.tanh(
+        np.dot(x, kernel_gru[:, 2*units_gru:]) +
+        r * np.dot(h_prev, recurrent_kernel_gru[:, 2*units_gru:]) +
+        bias_gru_candidate[:, 2*units_gru:].reshape(-1)
+    )
     h = z * h_prev + (1 - z) * h_bar
     return h
 
