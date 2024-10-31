@@ -8,7 +8,7 @@
                         <a href="javascript:void(0);" class="bars"></a>
                         <a class="navbar-brand" href="#"><img
                                 src="{{ url_for('static', filename='assets/images/logo.svg') }}" width="30"
-                                alt="Amaze"><span class="ml-2">Comodity Price Predict</span></a>
+                                alt="Amaze"><span class="ml-2">Prediksi Harga Komoditas Pangan</span></a>
                     </div>
                     <div class="d-flex justify-content-end justify-content-md-between align-items-center flex-grow-1">
                         <div class="d-flex align-items-center currently_maintain hidden-xs"></div>
@@ -40,7 +40,12 @@
                         </li>
                         <li class="{{ 'active' if active_page == 'predict' else '' }}">
                             <a href="{{ url_for('web.predict') }}" class="menu-toggle">
-                                <i class="zmdi zmdi-chart"></i><span>Predict</span>
+                                <i class="zmdi zmdi-chart"></i><span>Prediksi</span>
+                            </a>
+                        </li>
+                        <li class="{{ 'active' if active_page == 'config' else '' }}">
+                            <a href="{{ url_for('web.config') }}" class="menu-toggle">
+                                <i class="zmdi zmdi-settings"></i><span>Konfigurasi</span>
                             </a>
                         </li>
                     </ul>

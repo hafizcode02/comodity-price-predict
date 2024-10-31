@@ -2,6 +2,7 @@ import os
 from src.predict.index import predict
 from src.web.index import web
 from src.comodity.index import comodity
+from src.config.index import config
 from flask import Flask, request, jsonify
 
 # Initialize Flask App
@@ -10,6 +11,7 @@ app = Flask(__name__)
 app.register_blueprint(web)
 app.register_blueprint(predict)
 app.register_blueprint(comodity)
+app.register_blueprint(config)
 
 # Print all routes
 def print_routes():
