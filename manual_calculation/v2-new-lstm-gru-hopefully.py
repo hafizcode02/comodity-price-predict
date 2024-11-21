@@ -1,17 +1,6 @@
 import numpy as np
 import joblib
 
-# # Load the MinMaxScaler object from the pickle file using joblib
-# try:
-#     scaler = joblib.load("E:\Braincore\skripsi\comodity-price-predict\manual_calculation\scaler.pkl")
-#     print("Loaded MinMaxScaler object")
-# except FileNotFoundError:
-#     print("Error: 'scal.pkl' file not found. Please ensure the file exists in the specified directory.")
-#     exit()  # Stop the execution if the file is not found
-# except Exception as e:
-#     print(f"An error occurred while loading the pickle file: {e}")
-#     exit()
-
 min_price_data = 19000
 max_price_data = 70000
     
@@ -28,7 +17,7 @@ input_tensor = (price_data - min_price_data) / (max_price_data - min_price_data)
 input_tensor = input_tensor.reshape((1, 30, 1))
 input_tensor = np.round(input_tensor, 6)  # Round off to 6 decimal places
 
-print("Price tensor data:", input_tensor)
+# print("Price tensor data:", input_tensor)
 
 # --- LSTM Layer ---
 # LSTM: units = 2, input_dim = 1
@@ -84,17 +73,65 @@ bias_lstm = np.array([
     0.29093149304389954
 ])
 
+iterate = 0
+
 # LSTM cell computations (simplified)
 def lstm_step(x, h_prev, c_prev):
     z = np.dot(x, kernel_lstm) + np.dot(h_prev, recurrent_kernel_lstm) + bias_lstm
+    
     i, f, c_bar, o = np.split(z, 4, axis=-1)  # Split into 4 gates
     i = 1 / (1 + np.exp(-i))  # Sigmoid
+    
     f = 1 / (1 + np.exp(-f))  # Sigmoid
+    
     o = 1 / (1 + np.exp(-o))  # Sigmoid
+    
     c_bar = np.tanh(c_bar)    # Tanh
+    
     c = f * c_prev + i * c_bar
     h = o * np.tanh(c)
+    
+    if(iterate == 0 or iterate == 1):
+        print("Iteration: ", iterate)
+        print("=====================================")
+        
+        print("")
+        print("------------------ Ht-1 & Ct-1 ------------------")
+        print("h_prev:", h_prev)
+        print("c_bar:", c_prev)
+        print("-------------------------------------------------")
+        print("")
+        
+        print("------------------ Breakdown Value ------------------")
+        print("x:", x)
+        print("kernel_lstm:", kernel_lstm)
+        print("x.kernel_lstm:",np.dot(x, kernel_lstm))
+        print("")
+        
+        print("h_prev:", h_prev)
+        print("recurrent_kernel_lstm:", recurrent_kernel_lstm)
+        print("h_prev.reccurent_kernel_lstm:",np.dot(h_prev, recurrent_kernel_lstm))
+        print("")
+        
+        print("bias_lstm: ",bias_lstm)
+        print("")
+        
+        print("z:", z)
+        
+        print("------------------------------------------------------")  
+        
+             
+        print("i:", i)
+        print("f:", f)
+        print("c_bar:", c_bar)
+        print("c:", c)
+        print("o:", o)
+        print("h:", h)
+        print("=====================================")
+        print("")
+
     return h, c
+    
 
 # Initialize LSTM hidden states
 h_lstm = np.zeros((units_lstm,))
@@ -105,6 +142,7 @@ output_lstm = []
 for t in range(timesteps):
     h_lstm, c_lstm = lstm_step(input_tensor[0,t], h_lstm, c_lstm)
     output_lstm.append(h_lstm)
+    iterate += 1
 
 output_lstm = np.array(output_lstm)  # Shape (30, 2)
 
