@@ -157,7 +157,7 @@ $(document).ready(function () {
         .then(response => response.json())
         .then(data => {
             let minMaxDate = getMinMaxDates(data.data);
-            createChartOptions(baseOptions, "Cabai Merah Besar", data.data, '#59c4bc', '#apex-cabai-merah-keriting', minMaxDate, '#cabai-merah-keriting');
+            createChartOptions(baseOptions, "Cabai Merah Keriting", data.data, '#59c4bc', '#apex-cabai-merah-keriting', minMaxDate, '#cabai-merah-keriting');
         })
         .catch(error => console.error('Error fetching data for chart cabai-merah-keriting:', error));
 
@@ -165,7 +165,7 @@ $(document).ready(function () {
         .then(response => response.json())
         .then(data => {
             let minMaxDate = getMinMaxDates(data.data);
-            createChartOptions(baseOptions, "Cabai Merah Besar", data.data, '#59c4bc', '#apex-cabai-rawit-merah', minMaxDate, '#cabai-rawit-merah');
+            createChartOptions(baseOptions, "Cabai Rawit Merah", data.data, '#59c4bc', '#apex-cabai-rawit-merah', minMaxDate, '#cabai-rawit-merah');
         })
         .catch(error => console.error('Error fetching data for chart cabai-rawit-merah:', error));
 
@@ -173,7 +173,7 @@ $(document).ready(function () {
         .then(response => response.json())
         .then(data => {
             let minMaxDate = getMinMaxDates(data.data);
-            createChartOptions(baseOptions, "Cabai Merah Besar", data.data, '#59c4bc', '#apex-cabai-rawit-hijau', minMaxDate, '#cabai-rawit-hijau');
+            createChartOptions(baseOptions, "Cabai Rawit Hijau", data.data, '#59c4bc', '#apex-cabai-rawit-hijau', minMaxDate, '#cabai-rawit-hijau');
         })
         .catch(error => console.error('Error fetching data for chart cabai-rawit-hijau:', error));
 
@@ -181,7 +181,7 @@ $(document).ready(function () {
         .then(response => response.json())
         .then(data => {
             let minMaxDate = getMinMaxDates(data.data);
-            createChartOptions(baseOptions, "Cabai Merah Besar", data.data, '#59c4bc', '#apex-bawang-merah', minMaxDate, '#bawang-merah');
+            createChartOptions(baseOptions, "Bawang Merah", data.data, '#59c4bc', '#apex-bawang-merah', minMaxDate, '#bawang-merah');
         })
         .catch(error => console.error('Error fetching data for chart bawang-merah:', error));
 });
