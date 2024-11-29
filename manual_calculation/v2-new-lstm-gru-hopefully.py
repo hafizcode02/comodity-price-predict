@@ -1,16 +1,6 @@
 import numpy as np
 import joblib
-
-# # Load the MinMaxScaler object from the pickle file using joblib
-# try:
-#     scaler = joblib.load("E:\Braincore\skripsi\comodity-price-predict\manual_calculation\scaler.pkl")
-#     print("Loaded MinMaxScaler object")
-# except FileNotFoundError:
-#     print("Error: 'scal.pkl' file not found. Please ensure the file exists in the specified directory.")
-#     exit()  # Stop the execution if the file is not found
-# except Exception as e:
-#     print(f"An error occurred while loading the pickle file: {e}")
-#     exit()
+import tensorflow as tf
 
 min_price_data = 19000
 max_price_data = 70000
@@ -28,7 +18,7 @@ input_tensor = (price_data - min_price_data) / (max_price_data - min_price_data)
 input_tensor = input_tensor.reshape((1, 30, 1))
 input_tensor = np.round(input_tensor, 6)  # Round off to 6 decimal places
 
-print("Price tensor data:", input_tensor)
+# print("Price tensor data:", input_tensor)
 
 # --- LSTM Layer ---
 # LSTM: units = 2, input_dim = 1
@@ -84,17 +74,65 @@ bias_lstm = np.array([
     0.29093149304389954
 ])
 
+iterate = 0
+
 # LSTM cell computations (simplified)
 def lstm_step(x, h_prev, c_prev):
     z = np.dot(x, kernel_lstm) + np.dot(h_prev, recurrent_kernel_lstm) + bias_lstm
+    
     i, f, c_bar, o = np.split(z, 4, axis=-1)  # Split into 4 gates
     i = 1 / (1 + np.exp(-i))  # Sigmoid
+    
     f = 1 / (1 + np.exp(-f))  # Sigmoid
+    
     o = 1 / (1 + np.exp(-o))  # Sigmoid
+    
     c_bar = np.tanh(c_bar)    # Tanh
+    
     c = f * c_prev + i * c_bar
     h = o * np.tanh(c)
+    
+    # if(iterate == 0 or iterate == 1):
+    #     print("Iteration: ", iterate)
+    #     print("=====================================")
+        
+    #     print("")
+    #     print("------------------ Ht-1 & Ct-1 ------------------")
+    #     print("h_prev:", h_prev)
+    #     print("c_bar:", c_prev)
+    #     print("-------------------------------------------------")
+    #     print("")
+        
+    #     print("------------------ Breakdown Value ------------------")
+    #     print("x:", x)
+    #     print("kernel_lstm:", kernel_lstm)
+    #     print("x.kernel_lstm:",np.dot(x, kernel_lstm))
+    #     print("")
+        
+    #     print("h_prev:", h_prev)
+    #     print("recurrent_kernel_lstm:", recurrent_kernel_lstm)
+    #     print("h_prev.reccurent_kernel_lstm:",np.dot(h_prev, recurrent_kernel_lstm))
+    #     print("")
+        
+    #     print("bias_lstm: ",bias_lstm)
+    #     print("")
+        
+    #     print("z:", z)
+        
+    #     print("------------------------------------------------------")  
+        
+             
+    #     print("i:", i)
+    #     print("f:", f)
+    #     print("c_bar:", c_bar)
+    #     print("c:", c)
+    #     print("o:", o)
+    #     print("h:", h)
+    #     print("=====================================")
+    #     print("")
+
     return h, c
+    
 
 # Initialize LSTM hidden states
 h_lstm = np.zeros((units_lstm,))
@@ -105,6 +143,7 @@ output_lstm = []
 for t in range(timesteps):
     h_lstm, c_lstm = lstm_step(input_tensor[0,t], h_lstm, c_lstm)
     output_lstm.append(h_lstm)
+    iterate += 1
 
 output_lstm = np.array(output_lstm)  # Shape (30, 2)
 
@@ -154,45 +193,94 @@ recurrent_kernel_gru = np.array([
     ]
 ])
 
-# Bias shape: (2, 6), splitting into two parts
-bias_gru_reset_update = np.array([
-    [
-        -1.1880439519882202,
-        -1.0855406522750854,
-        0.08151939511299133,
-        0.0965137705206871,
-        -0.010912179946899414,
-        0.03348875790834427
-    ],
-])
-bias_gru_candidate = np.array([
-    [
-        -1.1880439519882202,
-        -1.0855406522750854,
-        0.08151939511299133,
-        0.0965137705206871,
-        -0.041278108954429626,
-        0.014408046379685402
-    ]
+# # Bias shape: (2, 6), splitting into two parts
+# bias_gru_reset_update = np.array([
+#     [
+#         -1.1880439519882202,
+#         -1.0855406522750854,
+#         0.08151939511299133,
+#         0.0965137705206871,
+#         -0.010912179946899414,
+#         0.03348875790834427
+#     ],
+# ])
+# bias_gru_candidate = np.array([
+#     [
+#         -1.1880439519882202,
+#         -1.0855406522750854,
+#         0.08151939511299133,
+#         0.0965137705206871,
+#         -0.041278108954429626,
+#         0.014408046379685402
+#     ]
+# ])
+
+# Bias GRU : 
+bias_gru = np.array([
+    [-1.1880439519882202, -1.0855406522750854, 0.08151939511299133, 0.0965137705206871, -0.010912179946899414, 0.03348875790834427],
+    [-1.1880439519882202, -1.0855406522750854, 0.08151939511299133, 0.0965137705206871, -0.041278108954429626, 0.014408046379685402]
 ])
 
-# GRU cell computations (with customized bias handling)
-def gru_step(x, h_prev):
-    z = np.dot(x, kernel_gru) + np.dot(h_prev, recurrent_kernel_gru)
-    
-    # Split into reset, update, and candidate gates
-    r, z, h_bar = np.split(z, 3, axis=-1)
-    
-    # Apply the bias components for reset/update and candidate gates
-    r += bias_gru_reset_update[:, :units_gru].reshape(-1)  # Reshape bias to match shape of r
-    z += bias_gru_reset_update[:, units_gru:2*units_gru].reshape(-1)  # Reshape bias to match shape of z
-    h_bar += bias_gru_candidate[:, 2*units_gru:].reshape(-1)  # Reshape bias to match shape of h_bar
+def split_bias(bias, units, reset_after):
+    if reset_after:  # For reset_after=True (default TensorFlow GRU behavior)
+        b_std, b_recurrent = bias  # Shape is (2, 3 * units)
+        b_r, b_z, b_h = np.split(b_std, 3)  # Standard bias for reset, update, candidate
+        b_r_recurrent, b_z_recurrent, b_h_recurrent = np.split(b_recurrent, 3)  # Recurrent bias
+        return (b_r, b_z, b_h), (b_r_recurrent, b_z_recurrent, b_h_recurrent)
+    else:  # For reset_after=False
+        b_r, b_z, b_h = np.split(bias, 3)  # Shape is (3 * units,)
+        return (b_r, b_z, b_h), None
 
-    r = 1 / (1 + np.exp(-r))  # Sigmoid
-    z = 1 / (1 + np.exp(-z))  # Sigmoid
-    h_bar = np.tanh(np.dot(x, kernel_gru[:, 2*units_gru:]) + r * np.dot(h_prev, recurrent_kernel_gru[:, 2*units_gru:]))
-    h = z * h_prev + (1 - z) * h_bar
-    return h
+
+def gru_step(x_t, h_prev, reset_after=True):
+    input_dim, units = kernel_gru.shape[0], kernel_gru.shape[1] // 3
+    W_r, W_z, W_h = np.split(kernel_gru, 3, axis=1)
+    U_r, U_z, U_h = np.split(recurrent_kernel_gru, 3, axis=1)
+
+    # Split bias
+    (b_r, b_z, b_h), recurrent_bias = split_bias(bias_gru, units, reset_after)
+    if reset_after and recurrent_bias:
+        b_r_recurrent, b_z_recurrent, b_h_recurrent = recurrent_bias
+    else:
+        b_r_recurrent = b_z_recurrent = b_h_recurrent = 0
+
+    # Reset gate
+    r_t = tf.nn.sigmoid(
+        np.dot(x_t, W_r) + np.dot(h_prev, U_r) + b_r + b_r_recurrent
+    )
+
+    # Update gate
+    z_t = tf.nn.sigmoid(
+        np.dot(x_t, W_z) + np.dot(h_prev, U_z) + b_z + b_z_recurrent
+    )
+
+    # Candidate activation
+    h_t_candidate = tf.nn.tanh(
+        np.dot(x_t, W_h) + r_t * (np.dot(h_prev, U_h) + b_h_recurrent) + b_h
+    )
+
+    # Final hidden state
+    # h_t = (1 - z_t) * h_t_candidate + z_t * h_prev
+    h_t = z_t * h_prev + (1 - z_t) * h_t_candidate
+    return h_t
+
+# # GRU cell computations (with customized bias handling)
+# def gru_step(x, h_prev):
+#     z = np.dot(x, kernel_gru) + np.dot(h_prev, recurrent_kernel_gru)
+    
+#     # Split into reset, update, and candidate gates
+#     r, z, h_bar = np.split(z, 3, axis=-1)
+    
+#     # Apply the bias components for reset/update and candidate gates
+#     r += bias_gru_reset_update[:, :units_gru].reshape(-1)  # Reshape bias to match shape of r
+#     z += bias_gru_reset_update[:, units_gru:2*units_gru].reshape(-1)  # Reshape bias to match shape of z
+#     h_bar += bias_gru_candidate[:, 2*units_gru:].reshape(-1)  # Reshape bias to match shape of h_bar
+
+#     r = 1 / (1 + np.exp(-r))  # Sigmoid
+#     z = 1 / (1 + np.exp(-z))  # Sigmoid
+#     h_bar = np.tanh(np.dot(x, kernel_gru[:, 2*units_gru:]) + r * np.dot(h_prev, recurrent_kernel_gru[:, 2*units_gru:]))
+#     h = z * h_prev + (1 - z) * h_bar
+#     return h
 
 # # Revised GRU cell computations
 # def gru_step(x, h_prev):
@@ -212,6 +300,8 @@ def gru_step(x, h_prev):
 
 # Initialize GRU hidden states
 h_gru = np.zeros((units_gru,))
+
+print("h_gru: ", h_gru)
 
 # Process the input tensor through GRU (return_sequences=False)
 for t in range(timesteps):
