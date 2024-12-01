@@ -5,7 +5,12 @@ import tensorflow as tf
 min_price_data = 19000
 max_price_data = 70000
     
-price_data = np.array([45000,45000,45000,45000,45000,45000,45000,45000,45000,45000,65000,65000,65000,65000,65000,65000,65000,60000,60000,60000,60000,60000,60000,60000,60000,57500,55000,55000,53333,51667])
+# price_data = np.array([45000,45000,45000,45000,45000,45000,45000,45000,45000,45000,65000,65000,65000,65000,65000,65000,65000,60000,60000,60000,60000,60000,60000,60000,60000,57500,55000,55000,53333,51667])
+price_data = np.array([45000,45000,45000,45000,45000,45000,45000,45000,45000,65000,65000,65000,65000,65000,65000,65000,60000,60000,60000,60000,60000,60000,60000,60000,57500,55000,55000,53333,51667,50000])
+# price_data = np.array([45000,45000,45000,45000,45000,45000,45000,45000,65000,65000,65000,65000,65000,65000,65000,60000,60000,60000,60000,60000,60000,60000,60000,57500,55000,55000,53333,51667,50000,50000])
+# price_data = np.array([45000,45000,45000,45000,45000,45000,45000,65000,65000,65000,65000,65000,65000,65000,60000,60000,60000,60000,60000,60000,60000,60000,57500,55000,55000,53333,51667,50000,50000,50000])
+# price_data = np.array([45000,45000,45000,45000,45000,45000,65000,65000,65000,65000,65000,65000,65000,60000,60000,60000,60000,60000,60000,60000,60000,57500,55000,55000,53333,51667,50000,50000,50000,50000])
+
 
 # Data input
 timesteps = 30
@@ -15,7 +20,7 @@ input_tensor = (price_data - min_price_data) / (max_price_data - min_price_data)
 input_tensor = input_tensor.reshape((1, 30, 1))
 input_tensor = np.round(input_tensor, 6)  # Round off to 6 decimal places
 
-# print("Price tensor data:", input_tensor)
+print("Price tensor data:", input_tensor)
 
 # --- LSTM Layer ---
 # LSTM: units = 2, input_dim = 1
@@ -88,44 +93,44 @@ def lstm_step(x, h_prev, c_prev):
     c = f * c_prev + i * c_bar
     h = o * np.tanh(c)
     
-    # if(iterate == 0 or iterate == 1):
-    #     print("Iteration: ", iterate)
-    #     print("=====================================")
+    if(iterate == 0 or iterate == 1):
+        print("Iteration: ", iterate)
+        print("=====================================")
         
-    #     print("")
-    #     print("------------------ Ht-1 & Ct-1 ------------------")
-    #     print("h_prev:", h_prev)
-    #     print("c_bar:", c_prev)
-    #     print("-------------------------------------------------")
-    #     print("")
+        print("")
+        print("------------------ Ht-1 & Ct-1 ------------------")
+        print("h_prev:", h_prev)
+        print("c_bar:", c_prev)
+        print("-------------------------------------------------")
+        print("")
         
-    #     print("------------------ Breakdown Value ------------------")
-    #     print("x:", x)
-    #     print("kernel_lstm:", kernel_lstm)
-    #     print("x.kernel_lstm:",np.dot(x, kernel_lstm))
-    #     print("")
+        print("------------------ Breakdown Value ------------------")
+        print("x:", x)
+        print("kernel_lstm:", kernel_lstm)
+        print("x.kernel_lstm:",np.dot(x, kernel_lstm))
+        print("")
         
-    #     print("h_prev:", h_prev)
-    #     print("recurrent_kernel_lstm:", recurrent_kernel_lstm)
-    #     print("h_prev.reccurent_kernel_lstm:",np.dot(h_prev, recurrent_kernel_lstm))
-    #     print("")
+        print("h_prev:", h_prev)
+        print("recurrent_kernel_lstm:", recurrent_kernel_lstm)
+        print("h_prev.reccurent_kernel_lstm:",np.dot(h_prev, recurrent_kernel_lstm))
+        print("")
         
-    #     print("bias_lstm: ",bias_lstm)
-    #     print("")
+        print("bias_lstm: ",bias_lstm)
+        print("")
         
-    #     print("z:", z)
+        print("z:", z)
         
-    #     print("------------------------------------------------------")  
+        print("------------------------------------------------------")  
         
              
-    #     print("i:", i)
-    #     print("f:", f)
-    #     print("c_bar:", c_bar)
-    #     print("c:", c)
-    #     print("o:", o)
-    #     print("h:", h)
-    #     print("=====================================")
-    #     print("")
+        print("i:", i)
+        print("f:", f)
+        print("c_bar:", c_bar)
+        print("c:", c)
+        print("o:", o)
+        print("h:", h)
+        print("=====================================")
+        print("")
 
     return h, c
     
