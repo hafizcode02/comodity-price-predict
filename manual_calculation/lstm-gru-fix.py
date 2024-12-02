@@ -5,7 +5,12 @@ import tensorflow as tf
 min_price_data = 19000
 max_price_data = 70000
     
-price_data = np.array([45000,45000,45000,45000,45000,45000,45000,45000,45000,45000,65000,65000,65000,65000,65000,65000,65000,60000,60000,60000,60000,60000,60000,60000,60000,57500,55000,55000,53333,51667])
+# price_data = np.array([45000,45000,45000,45000,45000,45000,45000,45000,45000,45000,65000,65000,65000,65000,65000,65000,65000,60000,60000,60000,60000,60000,60000,60000,60000,57500,55000,55000,53333,51667])
+price_data = np.array([45000,45000,45000,45000,45000,45000,45000,45000,45000,65000,65000,65000,65000,65000,65000,65000,60000,60000,60000,60000,60000,60000,60000,60000,57500,55000,55000,53333,51667,50000])
+# price_data = np.array([45000,45000,45000,45000,45000,45000,45000,45000,65000,65000,65000,65000,65000,65000,65000,60000,60000,60000,60000,60000,60000,60000,60000,57500,55000,55000,53333,51667,50000,50000])
+# price_data = np.array([45000,45000,45000,45000,45000,45000,45000,65000,65000,65000,65000,65000,65000,65000,60000,60000,60000,60000,60000,60000,60000,60000,57500,55000,55000,53333,51667,50000,50000,50000])
+# price_data = np.array([45000,45000,45000,45000,45000,45000,65000,65000,65000,65000,65000,65000,65000,60000,60000,60000,60000,60000,60000,60000,60000,57500,55000,55000,53333,51667,50000,50000,50000,50000])
+
 
 # Data input
 timesteps = 30
@@ -15,7 +20,7 @@ input_tensor = (price_data - min_price_data) / (max_price_data - min_price_data)
 input_tensor = input_tensor.reshape((1, 30, 1))
 input_tensor = np.round(input_tensor, 6)  # Round off to 6 decimal places
 
-# print("Price tensor data:", input_tensor)
+print("Price tensor data:", input_tensor)
 
 # --- LSTM Layer ---
 # LSTM: units = 2, input_dim = 1
@@ -88,44 +93,44 @@ def lstm_step(x, h_prev, c_prev):
     c = f * c_prev + i * c_bar
     h = o * np.tanh(c)
     
-    # if(iterate == 0 or iterate == 1):
-    #     print("Iteration: ", iterate)
-    #     print("=====================================")
+    if(iterate == 0 or iterate == 1):
+        print("Iteration: ", iterate)
+        print("=====================================")
         
-    #     print("")
-    #     print("------------------ Ht-1 & Ct-1 ------------------")
-    #     print("h_prev:", h_prev)
-    #     print("c_bar:", c_prev)
-    #     print("-------------------------------------------------")
-    #     print("")
+        print("")
+        print("------------------ Ht-1 & Ct-1 ------------------")
+        print("h_prev:", h_prev)
+        print("c_bar:", c_prev)
+        print("-------------------------------------------------")
+        print("")
         
-    #     print("------------------ Breakdown Value ------------------")
-    #     print("x:", x)
-    #     print("kernel_lstm:", kernel_lstm)
-    #     print("x.kernel_lstm:",np.dot(x, kernel_lstm))
-    #     print("")
+        print("------------------ Breakdown Value ------------------")
+        print("x:", x)
+        print("kernel_lstm:", kernel_lstm)
+        print("x.kernel_lstm:",np.dot(x, kernel_lstm))
+        print("")
         
-    #     print("h_prev:", h_prev)
-    #     print("recurrent_kernel_lstm:", recurrent_kernel_lstm)
-    #     print("h_prev.reccurent_kernel_lstm:",np.dot(h_prev, recurrent_kernel_lstm))
-    #     print("")
+        print("h_prev:", h_prev)
+        print("recurrent_kernel_lstm:", recurrent_kernel_lstm)
+        print("h_prev.reccurent_kernel_lstm:",np.dot(h_prev, recurrent_kernel_lstm))
+        print("")
         
-    #     print("bias_lstm: ",bias_lstm)
-    #     print("")
+        print("bias_lstm: ",bias_lstm)
+        print("")
         
-    #     print("z:", z)
+        print("z:", z)
         
-    #     print("------------------------------------------------------")  
+        print("------------------------------------------------------")  
         
              
-    #     print("i:", i)
-    #     print("f:", f)
-    #     print("c_bar:", c_bar)
-    #     print("c:", c)
-    #     print("o:", o)
-    #     print("h:", h)
-    #     print("=====================================")
-    #     print("")
+        print("i:", i)
+        print("f:", f)
+        print("c_bar:", c_bar)
+        print("c:", c)
+        print("o:", o)
+        print("h:", h)
+        print("=====================================")
+        print("")
 
     return h, c
     
@@ -200,6 +205,8 @@ bias_gru = np.array([
     0.06481347233057022
 ])
 
+gru_step_count = 0
+
 def gru_step(x, h_prev):
     # Step 1: Compute the update gate (z)
     Wz = kernel_gru[:, :units_gru]  # Weights for input to update gate
@@ -207,16 +214,18 @@ def gru_step(x, h_prev):
     bz = bias_gru[:units_gru]  # Bias for update gate
     z = np.dot(x, Wz) + np.dot(h_prev, Uz) + bz  # Linear combination
     z = 1 / (1 + np.exp(-z))  # Apply sigmoid activation
-    # print("\n--- Update Gate (z) ---")
-    # print("x:", x)
-    # print("Wz:", Wz)
-    # print("x @ Wz:", np.dot(x, Wz))
-    # print("h_prev:", h_prev)
-    # print("Uz:", Uz)
-    # print("h_prev @ Uz:", np.dot(h_prev, Uz))
-    # print("bz:", bz)
-    # print("Linear combination (z):", np.dot(x, Wz) + np.dot(h_prev, Uz) + bz)
-    # print("z (after sigmoid):", z)
+    
+    if(gru_step_count == 0 or gru_step_count == 1):
+        print("\n--- Update Gate (z) ---")
+        print("x:", x)
+        print("Wz:", Wz)
+        print("x @ Wz:", np.dot(x, Wz))
+        print("h_prev:", h_prev)
+        print("Uz:", Uz)
+        print("h_prev @ Uz:", np.dot(h_prev, Uz))
+        print("bz:", bz)
+        print("Linear combination (z):", np.dot(x, Wz) + np.dot(h_prev, Uz) + bz)
+        print("z (after sigmoid):", z)
 
     # Step 2: Compute the reset gate (r)
     Wr = kernel_gru[:, units_gru:2*units_gru]  # Weights for input to reset gate
@@ -224,16 +233,18 @@ def gru_step(x, h_prev):
     br = bias_gru[units_gru:2*units_gru]  # Bias for reset gate
     r = np.dot(x, Wr) + np.dot(h_prev, Ur) + br  # Linear combination
     r = 1 / (1 + np.exp(-r))  # Apply sigmoid activation
-    # print("\n--- Reset Gate (r) ---")
-    # print("x:", x)
-    # print("Wr:", Wr)
-    # print("x @ Wr:", np.dot(x, Wr))
-    # print("h_prev:", h_prev)
-    # print("Ur:", Ur)
-    # print("h_prev @ Ur:", np.dot(h_prev, Ur))
-    # print("br:", br)
-    # print("Linear combination (r):", np.dot(x, Wr) + np.dot(h_prev, Ur) + br)
-    # print("r (after sigmoid):", r)
+    
+    if(gru_step_count == 0 or gru_step_count == 1):
+        print("\n--- Reset Gate (r) ---")
+        print("x:", x)
+        print("Wr:", Wr)
+        print("x @ Wr:", np.dot(x, Wr))
+        print("h_prev:", h_prev)
+        print("Ur:", Ur)
+        print("h_prev @ Ur:", np.dot(h_prev, Ur))
+        print("br:", br)
+        print("Linear combination (r):", np.dot(x, Wr) + np.dot(h_prev, Ur) + br)
+        print("r (after sigmoid):", r)
 
     # Step 3: Compute the candidate hidden state (h_tilde)
     Wh = kernel_gru[:, 2*units_gru:]  # Weights for input to candidate hidden state
@@ -241,25 +252,30 @@ def gru_step(x, h_prev):
     bh = bias_gru[2*units_gru:]  # Bias for candidate hidden state
     h_tilde = np.dot(x, Wh) + np.dot(r * h_prev, Uh) + bh  # Linear combination
     h_tilde = np.tanh(h_tilde)  # Apply tanh activation
-    # print("\n--- Candidate Hidden State (h_tilde) ---")
-    # print("x:", x)
-    # print("Wh:", Wh)
-    # print("x @ Wh:", np.dot(x, Wh))
-    # print("r * h_prev:", r * h_prev)
-    # print("Uh:", Uh)
-    # print("(r * h_prev) @ Uh:", np.dot(r * h_prev, Uh))
-    # print("bh:", bh)
-    # print("Linear combination (h_tilde):", np.dot(x, Wh) + np.dot(r * h_prev, Uh) + bh)
-    # print("h_tilde (after tanh):", h_tilde)
+    
+    if(gru_step_count == 0 or gru_step_count == 1):    
+        print("\n--- Candidate Hidden State (h_tilde) ---")
+        print("x:", x)
+        print("Wh:", Wh)
+        print("x @ Wh:", np.dot(x, Wh))
+        print("r * h_prev:", r * h_prev)
+        print("Uh:", Uh)
+        print("(r * h_prev) @ Uh:", np.dot(r * h_prev, Uh))
+        print("bh:", bh)
+        print("Linear combination (h_tilde):", np.dot(x, Wh) + np.dot(r * h_prev, Uh) + bh)
+        print("h_tilde (after tanh):", h_tilde)
 
     # Step 4: Compute the new hidden state (h)
-    # h = (1 - z) * h_prev + z * h_tilde
     h = z * h_prev + (1 - z) * h_tilde
-    # print("\n--- New Hidden State (h) ---")
-    # print("1 - z:", 1 - z)
-    # print("(1 - z) * h_prev:", (1 - z) * h_prev)
-    # print("z * h_tilde:", z * h_tilde)
-    # print("h (new hidden state):", h)
+    
+    if(gru_step_count == 0 or gru_step_count == 1):   
+        print("\n--- New Hidden State (h) ---")
+        print("1 - z:", 1 - z)
+        print("(1 - z) * h_tilde:", (1 - z) * h_tilde)
+        print("z * h_prev:", z * h_prev)
+        print("h (new hidden state):", h)
+        
+        print("---------------------------------------------")
 
     return h
 
@@ -272,6 +288,7 @@ print("h_gru: ", h_gru)
 # Process the input tensor through GRU (return_sequences=False)
 for t in range(timesteps):
     h_gru = gru_step(output_lstm[t], h_gru)
+    gru_step_count += 1
 
 # Final GRU output (shape: (2,))
 output_gru = h_gru
